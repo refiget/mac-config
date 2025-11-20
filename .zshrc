@@ -156,7 +156,6 @@ if [[ "$os_name" == "Darwin" ]]; then
     fi
     ssh -t "$1"
   }
-#test
   # 2. JLab Pro: 自动端口转发 + 启动远程服务 + 打开本地浏览器
   # 用法: jlab
   function jlab() {
