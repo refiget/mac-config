@@ -1,0 +1,83 @@
+# =========================
+# 全局忽略 (Global Ignores)
+# =========================
+.DS_Store
+.MacOS
+*.swp
+*.swo
+*~
+*.un~
+*.bak
+*.log
+*.tmp
+node_modules/
+
+# =========================
+# Neovim / Vim
+# =========================
+# 忽略插件源码 (vim-plug 下载的几十兆代码不要同步)
+nvim/plugged/
+# 忽略 Neovim 的 undo 历史目录 (如果有的话)
+nvim/undo/
+# 忽略 vim 的 views 和 sessions
+nvim/view/
+nvim/session/
+# 忽略旧的备份文件
+nvim/init.vim.bak
+# 忽略那个指向自己的死循环软链接
+nvim/nvim
+
+# =========================
+# CoC.nvim (LSP 配置)
+# =========================
+# 忽略已安装的扩展代码
+coc/extensions/*
+# !表示“不忽略”，我们需要保留这个文件来记录装了哪些插件
+!coc/extensions/package.json
+# 忽略 coc 的运行时缓存和历史
+coc/memos.json
+coc/mru
+coc/extensions/coc-yank-data/
+
+# =========================
+# Yazi (文件管理器)
+# =========================
+# 忽略自动生成的备份文件 (yazi.toml-xxxx)
+yazi/yazi.toml-*
+# 忽略整个备份文件夹
+yazi_backup_*/
+
+# =========================
+# Github Copilot
+# =========================
+# 这些通常是本地状态信息，不需要同步
+github-copilot/apps.json
+github-copilot/versions.json
+
+# =========================
+# iTerm2 (macOS 专用)
+# =========================
+# 忽略 AppSupport 软链接
+iterm2/AppSupport
+
+# =========================
+# 其他杂项
+# =========================
+# 忽略本次生成的目录树文件
+dotfiles_tree.txt
+# 插件和依赖
+/nvim/plugged/
+/node_modules/
+/.venv/
+/__pycache__/
+
+# 系统和缓存
+.DS_Store
+*.swp
+*.swo
+.zcompdump*
+*.zwc
+
+# 本地私有配置
+.gitconfig.local
+*.local
