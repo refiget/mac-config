@@ -25,7 +25,6 @@ link_file() {
     fi
 
     # 2. 检查是否已经是正确的软连接
-    # 注意: readlink 在 Mac 和 Linux 上行为略有不同，这里用 -L 判断是否为链接
     if [ -L "$DEST" ]; then
         local CURRENT_LINK=$(readlink "$DEST")
         if [ "$CURRENT_LINK" == "$SRC" ]; then
@@ -34,13 +33,13 @@ link_file() {
         fi
     fi
 
-    # 3. 如果目标存在（是文件、目录或错误的链接），则备份
+    # 3. 如果目标存在，则备份
     if [ -e "$DEST" ] || [ -L "$DEST" ]; then
         echo "🔄 备份冲突: $DEST -> $BACKUP_DIR/$FILENAME"
         mv "$DEST" "$BACKUP_DIR/"
     fi
 
-    # 4. 建立链接
+    # 4. 建立连接
     echo "🔗 建立连接: $FILENAME -> $DEST"
     ln -s "$SRC" "$DEST"
 }
@@ -60,7 +59,33 @@ link_file "$DOTFILES_DIR/.gitconfig"  "$HOME/.gitconfig"
 
 # --- .config 目录下的文件夹 ---
 link_file "$DOTFILES_DIR/nvim"        "$CONFIG_DIR/nvim"
-link_file "$DOTFILES_DIR/lazygit"     "$CONFIG_DIR/lazygit"
+
+# --- LazyGit（只修改这里）-----------------------------------
+# Linux 使用 ~/.config/lazygit
+# macOS 使用 ~/Library/Application Support/lazygit
+
+# 1. 删除 macOS 默认路径（避免冲突）
+if [[ "$(uname)" == "Darwin" ]]; then
+    MACOS_LG_DIR="$HOME/Library/Application Support/lazygit"
+    if [ -e "$MACOS_LG_DIR" ] || [ -L "$MACOS_LG_DIR" ]; then
+        echo "🧼 移除 macOS LazyGit 默认目录 (避免配置冲突): $MACOS_LG_DIR"
+        rm -rf "$MACOS_LG_DIR"
+    fi
+fi
+
+# 2. 链接 ~/.config/lazygit
+link_file "$DOTFILES_DIR/lazygit" "$CONFIG_DIR/lazygit"
+
+# 3. macOS 再补充一个链接（LazyGit 的实际读取目录）
+if [[ "$(uname)" == "Darwin" ]]; then
+    MACOS_LG_DIR="$HOME/Library/Application Support/lazygit"
+    mkdir -p "$MACOS_LG_DIR"
+
+    echo "🔗 macOS LazyGit 软链接 (config.yml) → dotfiles"
+    ln -sf "$DOTFILES_DIR/lazygit/config.yml" "$MACOS_LG_DIR/config.yml"
+fi
+# ---------------------------------------------------------------
+
 link_file "$DOTFILES_DIR/yazi"        "$CONFIG_DIR/yazi"
 
 # --- 其他 (如果您的仓库里有这些) ---
