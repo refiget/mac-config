@@ -39,6 +39,12 @@ if [[ -f /opt/homebrew/bin/brew ]]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
+# TexLive path (Mac)
+if [[ "$os_name" == "Darwin" ]]; then
+  export PATH="/usr/local/texlive/2025/bin/universal-darwin:$PATH"
+fi
+
+
 export EDITOR="nvim"
 export VISUAL="nvim"
 export PAGER="less"
@@ -142,43 +148,6 @@ alias vi='nvim'
 alias lg='lazygit'
 alias jl='jupyter lab'
 
-# ============================================================
-# 🛠 Mac Automation Tools (仅 Mac 加载)
-# ============================================================
-if [[ "$os_name" == "Darwin" ]]; then
-
-  # 1. 智能 SSH 连接 (配合服务器端的 Auto-Tmux)
-  # 用法: ss bob-remote
-  function ss() {
-    if [ -z "$1" ]; then
-      echo "❌ 用法: ss <服务器IP或别名>"
-      return 1
-    fi
-    ssh -t "$1"
-  }
-  # 2. JLab Pro: 自动端口转发 + 启动远程服务 + 打开本地浏览器
-  # 用法: jlab
-  function jlab() {
-    # --- 配置 ---
-    local HOST="bob-remote"       # 您的服务器别名
-    local PORT="8888"             # Jupyter 端口
-    local SESSION_NAME="jupyter"  # 独立的 Tmux 会话名
-
-    echo "🚀 正在启动工作流..."
-
-    # [本地动作] 启动后台倒计时，3秒后打开浏览器
-    (
-      sleep 3
-      echo "\n🌐 打开本地浏览器: http://localhost:$PORT"
-      open "http://localhost:$PORT"
-    ) &
-
-    # [远程动作] SSH 连接 + 端口转发 + 启动 Jupyter
-    ssh -L ${PORT}:localhost:${PORT} -t $HOST \
-      "tmux new-session -A -s $SESSION_NAME 'jupyter lab --no-browser --port=$PORT --ip=0.0.0.0'"
-  }
-
-fi # 结束 Mac 判断
 
 # ============================================================
 # External Tools (Yazi, Zoxide, FZF, NVM)
