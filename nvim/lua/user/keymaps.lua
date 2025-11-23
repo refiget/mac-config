@@ -63,3 +63,19 @@ keymap("n", "r", compile_run, { silent = true, desc = "Compile/Run file" })
 -- Terminal
 keymap("t", "<C-N>", "<C-\\><C-N>", opts)
 keymap("t", "<C-O>", "<C-\\><C-N><C-O>", opts)
+
+-- ===================== Delete behavior enhancements =====================
+
+-- x / X 删除到黑洞寄存器（不污染寄存器）
+keymap({"n", "x"}, "x", '"_x', opts)
+keymap({"n", "x"}, "X", '"_X', opts)
+
+-- c / C 删除并进入插入模式，但不写入寄存器
+keymap("n", "c", '"_c', opts)
+keymap("n", "C", '"_C', opts)
+keymap("x", "c", '"_c', opts)
+keymap("x", "C", '"_C', opts)
+
+-- d / D 删除进入系统剪贴板
+keymap({"n", "x"}, "d", '"+d', opts)
+keymap({"n", "x"}, "D", '"+D', opts)
