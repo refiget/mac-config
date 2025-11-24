@@ -66,16 +66,16 @@ keymap("t", "<C-O>", "<C-\\><C-N><C-O>", opts)
 
 -- ===================== Delete behavior enhancements =====================
 
--- x / X 删除到黑洞寄存器（不污染寄存器）
-keymap({"n", "x"}, "x", '"_x', opts)
-keymap({"n", "x"}, "X", '"_X', opts)
+-- ① d / D —— 正常删除（写入默认寄存器 "）
+keymap({ "n", "x" }, "d", "d", opts)
+keymap({ "n", "x" }, "D", "D", opts)
 
--- c / C 删除并进入插入模式，但不写入寄存器
+-- ② x / X —— 删一个字符，不污染寄存器（写入黑洞寄存器 "_）
+keymap("n", "x", '"_x', opts)
+keymap("n", "X", '"_X', opts)
+
+-- ③ c / C —— 修改也不写入寄存器（防止干扰 y）
 keymap("n", "c", '"_c', opts)
 keymap("n", "C", '"_C', opts)
 keymap("x", "c", '"_c', opts)
 keymap("x", "C", '"_C', opts)
-
--- d / D 删除进入系统剪贴板
-keymap({"n", "x"}, "d", '"+d', opts)
-keymap({"n", "x"}, "D", '"+D', opts)
