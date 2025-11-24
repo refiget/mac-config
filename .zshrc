@@ -206,6 +206,14 @@ if [[ -o interactive ]]; then
   command -v fastfetch >/dev/null && fastfetch
 fi
 
+# ===========================================================
+# load local config
+# ===========================================================
+# Load machine-local overrides if present (not synced to Git)
+if [ -f "$HOME/.zshrc.local" ]; then
+  source "$HOME/.zshrc.local"
+fi
+
 # ============================================================
 # 🚀 Auto-Start Tmux (Linux Server Only)
 # ============================================================
