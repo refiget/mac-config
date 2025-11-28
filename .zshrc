@@ -54,25 +54,27 @@ autoload -U colors && colors
 # ============================================================
 # 🖱 Custom Indicators & Cursor Shape
 # ============================================================
+# 只给交互式 shell 开启这些特效
+[[ $- != *i* ]] && return
 
-# 辅助函数：发送转义码改变光标形状
-# 2 = Block █ (普通模式), 6 = Beam | (插入模式)
-function _set_cursor() {
-  echo -ne "\e[$1 q"
-}
-
-# --- Vim 模式监听 ---
+# 模式指示：I = Insert, N = Normal
 VIM_MODE_INDICATOR="%F{green}I%f"
 
-function zle-keymap-select {
-  case ${KEYMAP} in
+# 2 = 实心方块 (Normal)，6 = 竖线 (Insert)
+_set_cursor() {
+  # 用 printf 比 echo -ne 更稳
+  printf '\e[%d q' "$1"
+}
+
+zle-keymap-select() {
+  case $KEYMAP in
     vicmd)
       VIM_MODE_INDICATOR="%F{red}N%f"
-      _set_cursor 2  # 切换到普通模式 -> 方块光标
+      _set_cursor 2          # Normal: 方块
       ;;
     main|viins)
       VIM_MODE_INDICATOR="%F{green}I%f"
-      _set_cursor 6  # 切换到插入模式 -> 竖线光标
+      _set_cursor 6          # Insert: 竖线
       ;;
     *)
       VIM_MODE_INDICATOR="%F{green}I%f"
@@ -83,9 +85,9 @@ function zle-keymap-select {
 }
 zle -N zle-keymap-select
 
-function zle-line-init {
+zle-line-init() {
   VIM_MODE_INDICATOR="%F{green}I%f"
-  _set_cursor 6      # 每次新行默认 -> 竖线光标
+  _set_cursor 6              # 新行默认竖线
   zle reset-prompt
 }
 zle -N zle-line-init

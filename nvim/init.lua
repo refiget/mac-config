@@ -1,10 +1,8 @@
 -- ===================== init.lua =====================
-
 -- === Load Core Modules ===
 require("user.core")
 require("user.plugins")
 require("user.keymaps")
-
 -- === LuaSnip Setup ===
 -- Load LuaSnip safely
 local ok, ls = pcall(require, "luasnip")
