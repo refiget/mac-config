@@ -2,8 +2,8 @@
 
 -- === Load Core Modules ===
 require("user.core")
-require("user.keymaps")
 require("user.plugins")
+require("user.keymaps")
 
 -- === LuaSnip Setup ===
 -- Load LuaSnip safely

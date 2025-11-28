@@ -21,6 +21,7 @@ end
 -- ===================== Plugin Section =====================
 vim.cmd([[
 call plug#begin('$HOME/.config/nvim/plugged')
+
 " LSP / Completion
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'fannheyward/coc-pyright'
@@ -35,6 +36,10 @@ Plug 'theniceboy/eleline.vim'
 Plug 'RRethy/vim-illuminate'
 Plug 'NvChad/nvim-colorizer.lua'
 Plug 'kevinhwang91/nvim-hlslens'
+
+" === Telescope  ===
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim'
 
 
 " === Editing Helpers ===
@@ -60,6 +65,25 @@ Plug 'rafamadriz/friendly-snippets'
 call plug#end()
 ]])
 
+-- ===================== Telescope =====================
+pcall(function()
+  local telescope = require("telescope")
+  telescope.setup({
+    defaults = {
+      -- 轻量一点的按键，不和你现有习惯冲突
+      mappings = {
+        i = {
+          ["<C-j>"] = "move_selection_next",
+          ["<C-k>"] = "move_selection_previous",
+        },
+        n = {
+          ["j"] = "move_selection_next",
+          ["k"] = "move_selection_previous",
+        },
+      },
+    },
+  })
+end)
 -- ===================== UI / Appearance =====================
 
 vim.opt.termguicolors = true

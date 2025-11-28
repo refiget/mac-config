@@ -1,21 +1,16 @@
 local ls = require("luasnip")
-local s  = ls.snippet
-local t  = ls.text_node
-local i  = ls.insert_node
+local s = ls.snippet
+local t = ls.text_node
+local i = ls.insert_node
 
-ls.add_snippets("python", {
-  s("trye", {
-    t({
-      "import sys, traceback",
-      "",
-      "try:",
-      "    # --- your main script code ---",
-      "",
-      "except Exception:",
-      "    traceback.print_exc()",
-      "    sys.exit(1)",
-      "",
-    }),
-    i(0),  -- Cursor will land here (below the whole code block)
+return {
+  -- 触发词：doctmain
+  -- 用法：在 Python 文件里，插入模式输入 doctmain 然后按 <Tab>（你当前的 LuaSnip 映射）
+  s("doctmain", {
+    t('if __name__ == "__main__":'),
+    t({ "", "    import doctest" }),
+    t({ "", "    doctest.testmod(verbose=" }),
+    i(1, "True"),
+    t(")"),
   }),
-})
+}

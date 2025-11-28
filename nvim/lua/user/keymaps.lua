@@ -171,7 +171,7 @@ local function ds_review_visual_in_term()
 
   -- 简单中文 prompt：先找问题，再给改进版
   local prompt = table.concat({
-    "请帮我检查下面这段 " .. lang .. " 的错误或不优雅之处，",
+    "你是运行在命令行的编程助手，举例简单，回答简明，请帮我检查下面这段 " .. lang .. " 的错误或不优雅之处，",
     "用中文列出问题：",
     "",
     "```" .. (ft ~= "" and ft or "text"),
@@ -190,3 +190,22 @@ vim.keymap.set(
   ds_review_visual_in_term,
   { silent = true, noremap = true, desc = "DeepSeek: review selected code (terminal)" }
 )
+
+
+-- ===================== Telescope: Projects + dotfiles 文件搜索 =====================
+vim.keymap.set("n", "<leader>w", function()
+  local ok, builtin = pcall(require, "telescope.builtin")
+  if not ok then
+    vim.notify("Telescope 未安装或加载失败", vim.log.levels.WARN, { title = "Telescope" })
+    return
+  end
+
+  local projects = vim.fn.expand("~/Projects")
+  local dotfiles = vim.fn.expand("~/dotfiles")
+
+  builtin.find_files({
+    -- 同时在 Projects 和 dotfiles 里搜
+    search_dirs = { projects, dotfiles },
+    hidden = true,  -- 包含隐藏文件（.gitignore 之类）
+  })
+end, { silent = true, noremap = true, desc = "Telescope: find file in Projects + dotfiles" })
