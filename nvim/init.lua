@@ -20,6 +20,7 @@ ls.config.set_config({
   enable_autosnippets = true,
 })
 
+
 -- === Load Snippets ===
 -- Load your custom Lua snippets (in dotfiles)
 require("luasnip.loaders.from_lua").lazy_load({ paths = "~/dotfiles/nvim/lua/snippets" })

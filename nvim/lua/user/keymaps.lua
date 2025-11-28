@@ -39,6 +39,15 @@ keymap("n", "ti", ":+tabnext<CR>", opts)
 keymap("n", "sv", "<C-w>t<C-w>H", opts)
 keymap("n", "sh", "<C-w>t<C-w>K", opts)
 
+
+-- Coc.nvim format --
+vim.keymap.set(
+  "n",
+  "<leader>f",
+  ":CocCommand editor.action.formatDocument<CR>",
+  { silent = true, noremap = true, desc = "Format document with Coc" }
+)
+keymap("n", "cr", "<Plug>(coc-rename)", { silent = true })
 -- Markdown + Wrap toggle
 keymap("n", "<leader>sw", ":set wrap!<CR>", { desc = "Toggle wrap" })
 keymap("i", "<C-y>", "<ESC>A {}<ESC>i<CR><ESC>ko", opts)
@@ -78,4 +87,4 @@ keymap("n", "X", '"_X', opts)
 keymap("n", "c", '"_c', opts)
 keymap("n", "C", '"_C', opts)
 keymap("x", "c", '"_c', opts)
-keymap("x", "C", '"_C', opts)
+keymap("x", "C", '"_C', opts) 

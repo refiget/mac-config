@@ -21,6 +21,9 @@ end
 -- ===================== Plugin Section =====================
 vim.cmd([[
 call plug#begin('$HOME/.config/nvim/plugged')
+" LSP / Completion
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'fannheyward/coc-pyright'
 
 " === Appearance ===
 Plug 'theniceboy/nvim-deus'
@@ -32,7 +35,7 @@ Plug 'theniceboy/eleline.vim'
 Plug 'RRethy/vim-illuminate'
 Plug 'NvChad/nvim-colorizer.lua'
 Plug 'kevinhwang91/nvim-hlslens'
-Plug 'itchyny/lightline.vim'
+
 
 " === Editing Helpers ===
 Plug 'jiangmiao/auto-pairs'
@@ -44,7 +47,6 @@ Plug 'junegunn/goyo.vim'
 Plug 'dkarter/bullets.vim'
 Plug 'mzlogin/vim-markdown-toc'
 Plug 'dhruvasagar/vim-table-mode'
-" NOTE: you can manually call :TableModeToggle when needed
 
 " === Jupyter / Markdown ===
 Plug 'goerz/jupytext.vim'
@@ -63,13 +65,11 @@ call plug#end()
 vim.opt.termguicolors = true
 vim.cmd("silent! colorscheme deus")
 
--- Modern Lua highlight API
 vim.api.nvim_set_hl(0, "NonText", { fg = "grey10" })
 vim.g.rainbow_active = 1
 vim.g.Illuminate_delay = 750
 vim.api.nvim_set_hl(0, "illuminatedWord", { undercurl = true })
 
--- Lightline setup
 vim.g.lightline = {
   active = {
     left = {
@@ -81,13 +81,11 @@ vim.g.lightline = {
 
 -- ===================== Plugin Configurations =====================
 
--- Scrollbar
 pcall(function()
   require("scrollbar").setup()
   require("scrollbar.handlers.search").setup()
 end)
 
--- Colorizer
 pcall(function()
   require("colorizer").setup({
     filetypes = { "*" },
@@ -102,33 +100,40 @@ pcall(function()
   })
 end)
 
--- Bullets
 vim.g.bullets_enabled_file_types = { 'markdown', 'text', 'gitcommit' }
 vim.g.bullets_auto_indent_after_enter = 1
 
--- Markdown TOC
 vim.g.vmt_cycle_list_item_markers = 1
 vim.g.vmt_fence_text = 'TOC'
 vim.g.vmt_fence_closing_text = '/TOC'
 
--- Instant Markdown
 vim.g.instant_markdown_slow = 0
 vim.g.instant_markdown_autostart = 0
 vim.g.instant_markdown_autoscroll = 1
--- Uncomment if you need MathJax:
--- vim.g.instant_markdown_mathjax = 1
 
--- Table Mode toggle key
 vim.keymap.set("n", "<leader>tm", ":TableModeToggle<CR>", { noremap = true, silent = true })
-
--- Goyo mode
 vim.keymap.set("n", "<leader>gy", ":Goyo<CR>", { noremap = true, silent = true })
-
--- Tabular alignment
 vim.keymap.set("v", "ga", ":Tabularize /", { noremap = true })
 
 -- ===================== Final tweaks =====================
 vim.opt.re = 0
 vim.cmd("nohlsearch")
+vim.g.eleline_colorscheme = 'deus'
+vim.g.eleline_powerline_fonts = 1
 
-print(" Plugins loaded successfully!")
+
+-- =============================
+-- Safe rainbow delimiter colors
+-- =============================
+local soft = "#88c0a0"   -- 散光友好颜色
+
+vim.g.rainbow_conf = {
+  guifgs = {
+    "#ff5555",  -- red
+    "#f1fa8c",  -- yellow
+    soft,       -- blue → 柔和青绿
+    "#bd93f9",  -- purple
+    "#50fa7b",  -- green
+  },
+  ctermfgs = { "Red", "Yellow", "Green", "Cyan", "Magenta" },
+}
