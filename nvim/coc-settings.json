@@ -4,5 +4,17 @@
   "python.formatting.blackArgs": [
     "--fast"
   ],
-  "coc.preferences.formatOnSaveFiletypes": ["python"]
+  "coc.preferences.formatOnSaveFiletypes": [
+    "python"
+  ],
+
+  // ✅ 全局关闭 coc 的 inlay hints 功能
+  "inlayHint.enable": false,
+
+  // ✅ pyright 自己的所有 inlay hints 全关
+  "pyright.inlayHints.variableTypes": false,
+  "pyright.inlayHints.functionLikeReturnTypes": false,
+  "pyright.inlayHints.parameterNames": false,
+  "pyright.inlayHints.parameterTypes": false,
+  "pyright.inlayHints.enumMemberValues": false
 }

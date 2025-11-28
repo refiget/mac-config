@@ -88,3 +88,105 @@ keymap("n", "c", '"_c', opts)
 keymap("n", "C", '"_C', opts)
 keymap("x", "c", '"_c', opts)
 keymap("x", "C", '"_C', opts) 
+
+
+-------------------------------------------------
+-- DeepSeek CLI 集成（Neovim 内置 terminal 版本）
+-------------------------------------------------
+
+-- 你的 ds 所在目录 + 可执行文件名
+local DS_CMD_ROOT = "/home/bob/Projects/deepseek-cli"
+local DS_CMD = "./ds"   -- deepseek-cli 目录里的可执行脚本
+
+-- 在右侧新建一个终端窗口，流式运行命令
+local function open_ds_term(cmd)
+  -- 在右侧竖分屏中新建一个空窗口
+  vim.cmd("botright vnew")
+
+  -- 获取当前窗口，用来设置宽度
+  local win = vim.api.nvim_get_current_win()
+
+  -- 在这个新窗口 / buffer 里打开终端
+  vim.fn.termopen({ "bash", "-lc", "cd " .. DS_CMD_ROOT .. " && " .. cmd })
+
+  -- 右侧窗口宽度，可按需要调整
+  vim.api.nvim_win_set_width(win, 50)
+
+  -- 进入插入模式方便看输出
+  vim.cmd("startinsert")
+end
+
+-- 获取可视模式选区文本
+local function get_visual_selection()
+  local _, ls, cs = unpack(vim.fn.getpos("'<"))
+  local _, le, ce = unpack(vim.fn.getpos("'>"))
+  if ls > le or (ls == le and cs > ce) then
+    ls, le = le, ls
+    cs, ce = ce, cs
+  end
+  local lines = vim.fn.getline(ls, le)
+  if #lines == 0 then
+    return ""
+  end
+  lines[#lines] = string.sub(lines[#lines], 1, ce)
+  lines[1] = string.sub(lines[1], cs)
+  return table.concat(lines, "\n")
+end
+
+-------------------------------------------------
+-- 1) 在 Neovim 里向 DeepSeek 提问（普通问答）
+--    普通模式按：<leader>dq   （空格 d q）
+-------------------------------------------------
+local function ds_ask_in_term()
+  local q = vim.fn.input("DeepSeek> ")
+  if q == nil or q == "" then
+    return
+  end
+  -- shellescape 防止引号等字符把命令搞坏
+  local esc = vim.fn.shellescape(q)
+  local cmd = DS_CMD .. " " .. esc
+  open_ds_term(cmd)
+end
+
+vim.keymap.set(
+  "n",
+  "<leader>dq",
+  ds_ask_in_term,
+  { silent = true, noremap = true, desc = "DeepSeek: ask question (terminal)" }
+)
+
+-------------------------------------------------
+-- 2) 选中一段代码让 DeepSeek 查错 + 给修改建议
+--    可视模式按：<leader>dr   （空格 d r）
+-------------------------------------------------
+local function ds_review_visual_in_term()
+  local code = get_visual_selection()
+  if code == nil or code == "" then
+    vim.notify("No visual selection", vim.log.levels.WARN, { title = "DeepSeek Review" })
+    return
+  end
+
+  local ft = vim.bo.filetype
+  local lang = (ft ~= "" and ft or "代码")
+
+  -- 简单中文 prompt：先找问题，再给改进版
+  local prompt = table.concat({
+    "请帮我检查下面这段 " .. lang .. " 的错误或不优雅之处，",
+    "用中文列出问题：",
+    "",
+    "```" .. (ft ~= "" and ft or "text"),
+    code,
+    "```",
+  }, "\n")
+
+  local esc = vim.fn.shellescape(prompt)
+  local cmd = DS_CMD .. " " .. esc
+  open_ds_term(cmd)
+end
+
+vim.keymap.set(
+  "v",
+  "<leader>dr",
+  ds_review_visual_in_term,
+  { silent = true, noremap = true, desc = "DeepSeek: review selected code (terminal)" }
+)
