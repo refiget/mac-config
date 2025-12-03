@@ -26,12 +26,16 @@ call plug#begin('$HOME/.config/nvim/plugged')
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'fannheyward/coc-pyright'
 
+" Modern Markdown renderer
+Plug 'MeanderingProgrammer/render-markdown.nvim'
+Plug 'nvim-treesitter/nvim-treesitter'
+Plug 'nvim-tree/nvim-web-devicons'
+		
 " === Appearance ===
 Plug 'theniceboy/nvim-deus'
-Plug 'ryanoasis/vim-devicons'
 Plug 'kyazdani42/nvim-web-devicons'
-Plug 'luochen1990/rainbow'
 Plug 'petertriho/nvim-scrollbar'
+Plug 'HiPhish/rainbow-delimiters.nvim'
 Plug 'theniceboy/eleline.vim'
 Plug 'RRethy/vim-illuminate'
 Plug 'NvChad/nvim-colorizer.lua'
@@ -43,20 +47,21 @@ Plug 'nvim-telescope/telescope.nvim'
 
 
 " === Editing Helpers ===
-Plug 'jiangmiao/auto-pairs'
-Plug 'tpope/vim-surround'
+Plug 'windwp/nvim-autopairs'
+Plug 'echasnovski/mini.surround'
 Plug 'junegunn/vim-after-object'
 Plug 'godlygeek/tabular'
-Plug 'Yggdroot/indentLine'
 Plug 'junegunn/goyo.vim'
+Plug 'lukas-reineke/indent-blankline.nvim'
 Plug 'dkarter/bullets.vim'
+Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 Plug 'mzlogin/vim-markdown-toc'
 Plug 'dhruvasagar/vim-table-mode'
 
 " === Jupyter / Markdown ===
 Plug 'goerz/jupytext.vim'
 Plug 'dccsillag/magma-nvim'
-Plug 'suan/vim-instant-markdown'
+Plug 'iamcco/markdown-preview.nvim'
 
 " === LuaSnip ===
 Plug 'L3MON4D3/LuaSnip'
@@ -161,3 +166,21 @@ vim.g.rainbow_conf = {
   },
   ctermfgs = { "Red", "Yellow", "Green", "Cyan", "Magenta" },
 }
+
+-- render-markdown.nvim config
+pcall(function()
+  require("render-markdown").setup({
+    -- 默认配置就很好看，你可以以后再改主题
+  })
+end)
+
+pcall(function()
+  require("nvim-treesitter.configs").setup({
+    ensure_installed = {
+      "lua","vim","markdown","markdown_inline","python","json","bash","javascript","c"
+    },
+    highlight = { enable = true },
+    indent = { enable = true },
+  })
+end)
+
