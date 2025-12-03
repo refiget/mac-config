@@ -12,3 +12,8 @@ edit = [
 open = [
     { run = 'open "$@"', desc = "Open", orphan = true }
 ]
+
+
+[clipboard]
+copy = "pbcopy"
+
