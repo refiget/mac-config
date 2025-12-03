@@ -171,7 +171,7 @@ local function ds_review_visual_in_term()
 
   -- 简单中文 prompt：先找问题，再给改进版
   local prompt = table.concat({
-    "你是运行在命令行的编程助手，举例简单，回答简明，请帮我检查下面这段 " .. lang .. " 的错误或不优雅之处，",
+    "你是运行在命令行的编程助手，举例简单，回答简明且简洁，不要举过多例子，请帮我检查下面这段 " .. lang .. " 的错误或不优雅之处，",
     "用中文列出问题：",
     "",
     "```" .. (ft ~= "" and ft or "text"),
