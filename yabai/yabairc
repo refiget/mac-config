@@ -1,0 +1,91 @@
+#!/usr/bin/env sh
+
+# ======================================
+# 基础设置（最稳定 non-injection 配置）
+# ======================================
+
+# 鼠标移动焦点
+yabai -m config mouse_follows_focus          on
+yabai -m config focus_follows_mouse          off
+
+# 窗口布局策略
+yabai -m config window_placement             second_child
+yabai -m config window_shadow                on
+
+# ======================================
+# 强制平铺：auto_manage + BSP（最关键）
+# ======================================
+yabai -m config layout                       bsp
+yabai -m config auto_manage                  on
+yabai -m config auto_balance                 on
+
+# ======================================
+# 界面美化 & 间距
+# ======================================
+yabai -m config top_padding                  12
+yabai -m config bottom_padding               12
+yabai -m config left_padding                 12
+yabai -m config right_padding                12
+yabai -m config window_gap                   10
+
+# ======================================
+# 强制新窗口不 float（默认严格平铺）
+# ======================================
+yabai -m config window_opacity               off
+yabai -m config window_border                off
+
+# ======================================
+# =========== 自动 Float 规则 ============
+# 这些窗口平铺会导致卡顿、错乱、焦点丢失
+# ======================================
+
+# Finder 必须 float
+yabai -m rule --add app="^Finder$"                       manage=off
+
+# 系统窗口
+yabai -m rule --add app="^System Settings$"              manage=off
+yabai -m rule --add app="^App Store$"                    manage=off
+yabai -m rule --add app="^Dictionary$"                   manage=off
+yabai -m rule --add app="^Disk Utility$"                 manage=off
+yabai -m rule --add app="^Activity Monitor$"             manage=off
+
+# 常见工具类（平铺体验差）
+yabai -m rule --add app="^Preview$"                      manage=off
+yabai -m rule --add app="^Image Capture$"                manage=off
+yabai -m rule --add app="^Books$"                        manage=off
+
+# 系统 Dialog（不 float 会卡死）
+yabai -m rule --add role="AXSystemDialog"                manage=off
+yabai -m rule --add subrole="AXDialog"                   manage=off
+yabai -m rule --add subrole="AXSystemDialog"             manage=off
+
+# 子窗口浮动（如帮助窗口、设置对话框）
+yabai -m rule --add role="AXWindow" subrole="AXFloatingWindow" manage=off
+
+# 全屏应用自动浮动
+yabai -m rule --add subrole="AXStandardWindow" fullscreen=on
+
+# ======================================
+# 结束
+# ======================================
+# ------ 动画设置（non-SA 最佳方案） ------
+
+# 系统动画增强
+defaults write -g NSWindowShouldDragOnGesture -bool true
+defaults write -g NSAutomaticWindowAnimationsEnabled -bool true
+defaults write -g NSWindowResizeTime -float 0.001
+
+# Dock 动画
+defaults write com.apple.dock workspaces-edge-delay -float 0.1
+defaults write com.apple.dock expose-animation-duration -float 0.15
+killall Dock
+
+# yabai 内动画
+yabai -m config window_animation_duration 0.20
+yabai -m config window_opacity on
+yabai -m config window_opacity_duration 0.18
+yabai -m config active_window_opacity   1.0
+yabai -m config normal_window_opacity   0.92
+
+echo "yabai configuration loaded (non-SA optimized)"
+
