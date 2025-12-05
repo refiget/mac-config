@@ -51,6 +51,13 @@ keymap("n", "cr", "<Plug>(coc-rename)", { silent = true })
 -- Markdown + Wrap toggle
 keymap("n", "<leader>sw", ":set wrap!<CR>", { desc = "Toggle wrap" })
 keymap("i", "<C-y>", "<ESC>A {}<ESC>i<CR><ESC>ko", opts)
+vim.keymap.set(
+  "i",
+  "<CR>",
+  'pumvisible() ? coc#_select_confirm() : "<CR>"',
+  { noremap = true, silent = true, expr = true }
+)
+
 
 -- Compile/Run
 local function compile_run()
@@ -138,12 +145,15 @@ end
 --    普通模式按：<leader>dq   （空格 d q）
 -------------------------------------------------
 local function ds_ask_in_term()
-  local q = vim.fn.input("DeepSeek> ")
+  local q = vim.fn.input("DeepSeek（请直接问）> ")
   if q == nil or q == "" then
     return
   end
-  -- shellescape 防止引号等字符把命令搞坏
-  local esc = vim.fn.shellescape(q)
+  
+  -- 添加简洁指令
+  local concise_q = "请用最简洁的方式回答，直接给答案，不要解释过程，不要用礼貌用语：" .. q
+  
+  local esc = vim.fn.shellescape(concise_q)
   local cmd = DS_CMD .. " " .. esc
   open_ds_term(cmd)
 end
@@ -169,14 +179,15 @@ local function ds_review_visual_in_term()
   local ft = vim.bo.filetype
   local lang = (ft ~= "" and ft or "代码")
 
-  -- 简单中文 prompt：先找问题，再给改进版
+  -- 优化后的简洁 prompt
   local prompt = table.concat({
-    "你是运行在命令行的编程助手，举例简单，回答简明且简洁，不要举过多例子，请帮我检查下面这段 " .. lang .. " 的错误或不优雅之处，",
-    "用中文列出问题：",
+    "直接指出以下" .. lang .. "代码的问题，给出修改后的代码。",
+    "要求：1. 列出关键问题（不超过3点） 2. 直接给出修改后的代码 3. 不要解释原理",
     "",
-    "```" .. (ft ~= "" and ft or "text"),
+    "代码：",
     code,
-    "```",
+    "",
+    "请按这个格式回答：[问题列表] [修改后的代码]"
   }, "\n")
 
   local esc = vim.fn.shellescape(prompt)
@@ -207,5 +218,41 @@ vim.keymap.set("n", "<leader>w", function()
     -- 同时在 Projects 和 dotfiles 里搜
     search_dirs = { projects, dotfiles },
     hidden = true,  -- 包含隐藏文件（.gitignore 之类）
+    
+    -- 添加这个配置，让文件在新标签页打开
+    attach_mappings = function(prompt_bufnr, map)
+      -- 覆盖默认的打开方式
+      map("i", "<CR>", function()
+        local selection = require("telescope.actions.state").get_selected_entry()
+        require("telescope.actions").close(prompt_bufnr)
+        
+        if selection then
+          -- 在新标签页打开文件
+          vim.cmd("tabe " .. selection.path)
+        end
+      end)
+      
+      -- 保持其他快捷键
+      map("i", "<C-v>", function()
+        local selection = require("telescope.actions.state").get_selected_entry()
+        require("telescope.actions").close(prompt_bufnr)
+        
+        if selection then
+          vim.cmd("vsplit " .. selection.path)
+        end
+      end)
+      
+      map("i", "<C-x>", function()
+        local selection = require("telescope.actions.state").get_selected_entry()
+        require("telescope.actions").close(prompt_bufnr)
+        
+        if selection then
+          vim.cmd("split " .. selection.path)
+        end
+      end)
+      
+      return true
+    end,
   })
-end, { silent = true, noremap = true, desc = "Telescope: find file in Projects + dotfiles" })
+end, { silent = true, noremap = true, desc = "Telescope: find file in Projects + dotfiles (open in new tab)" })
+
